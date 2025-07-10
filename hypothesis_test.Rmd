@@ -1,0 +1,89 @@
+---
+title: "BM1_hypothesis_test"
+author: "Luxuan Zhang"
+date: "2025-07-10"
+output: html_document
+---
+
+```{r}
+library(MASS)
+birthwt
+```
+
+```{r}
+n <- nrow(birthwt)
+lwt_mean <- mean(birthwt$lwt)
+lwt_sd <- sd(birthwt$lwt)
+t_cv <- qt(1-0.05/2, df = n -1)
+lwt_low <- lwt_mean - t_cv * lwt_sd / sqrt(n)
+lwt_high <- lwt_mean + t_cv * lwt_sd / sqrt(n)
+lwt_low # 125.43
+lwt_high #134.20
+```
+
+```{r}
+birthwt$smoke
+smoke <- subset(birthwt, subset = smoke == 1)
+non_smoke <- subset(birthwt, subset = smoke == 0)
+
+smoke_var <- var(smoke$lwt)
+nonsmoke_var <- var(non_smoke$lwt)
+n1 <- nrow(smoke)
+n2 <- nrow(non_smoke)
+
+F_test = smoke_var^2 / nonsmoke_var^2
+F_cv <- qf(1-0.05/2, df1 = n1 - 1, df2 = n2 - 1)
+
+# decision
+ifelse(F_test > F_cv, "reject", "fail to reject") # Fail to reject
+```
+
+```{r}
+birthwt$ht
+ht <- subset(birthwt, subset = ht == 1)
+nonht <- subset(birthwt, subset = ht == 0)
+
+p <- nrow(ht) / nrow(birthwt)
+z_cv <- qnorm(1-0.01/2)
+se <- sqrt((p * (1 - p))/n)
+
+lower <- p - z_cv * se
+upper <- p + z_cv * se
+c(lower, upper)
+```
+
+```{r}
+ht_results <- prop.test(nrow(ht), n,
+                        p = 0.20,
+                        alternative = "less",
+                        conf.level = 0.90)
+ht_results
+```
+
+```{r}
+n_sui <- sum(smoke$ui == 1)
+n_nsui <- sum(non_smoke$ui == 1)
+n_sui
+n_nsui
+
+twosample_prop = prop.test(c(13, 15), n = c(74, 115), alternative = "two.sided",
+          conf.level = 0.99)
+twosample_prop
+```
+
+```{r}
+birthwt$race
+birthwt$bwt
+
+boxplot(bwt ~ race, data = birthwt,
+        main="Weight of different races of American pregnant women",
+        xlab="race", ylab="birth weight")
+
+# ANOVA
+res1 = aov(bwt ~ factor(race), data = birthwt)
+summary(res1)
+
+#Multiple comparison
+pairwise.t.test(birthwt$bwt, birthwt$race, p.adj = 'bonferroni')
+```
+
