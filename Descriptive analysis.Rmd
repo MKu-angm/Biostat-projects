@@ -1,0 +1,40 @@
+---
+title: "Biostat"
+author: "Luxuan Zhang"
+date: "2025-06-30"
+output: html_document
+---
+
+Week 1
+```{r}
+bc <- read.csv("/Users/mku/Desktop/2026/Biostat/Week1/breast-cancer.csv")
+```
+
+```{r}
+str(bc)
+head(bc)
+head(bc)
+
+colSums(is.na(bc))
+# no missing data
+```
+
+```{r}
+bc$diagnosis <- as.factor(bc$diagnosis)
+```
+
+```{r}
+summary(bc$texture_mean)
+
+ggplot(bc, aes(x = diagnosis, y = texture_mean)) + geom_boxplot(fill = "skyblue") +
+  labs(title = "Histogram of Texture_mean", x = "Diagnosis classification", y = "Texture_mean") + 
+  theme_minimal()
+
+```
+
+
+
+
+
+
+
